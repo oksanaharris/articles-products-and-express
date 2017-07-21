@@ -41,11 +41,21 @@ router.put('/:id', function (req, res){
   if(!findExistingProduct('id', parseInt(req.params.id))) return res.status(400).send({'error': 'cannot edit a non-existing product'});
   if(parseInt(req.params.id) !== parseInt(req.body.id)) return res.status(400).send({'error': 'id in url and in body do not match'});
   updateProduct(req.body, findExistingProduct('id', parseInt(req.params.id)));
-  res.send('update a product');
+  res.send('updated a product');
+  // if successful redirect to /products/:id so they can see updates
+  // if not successful, redirect to new route /products/:id/edit with error in flash
   console.log(ProductDb.products);
 });
 
 
+router.delete('/:id', function (req, res){
+  if(!findExistingProduct('id', parseInt(req.params.id))) return res.status(400).send({'error': 'cannot delete a non-existing product'});
+  ProductDb.remove(parseInt(req.params.id));
+  console.log(ProductDb.products);
+  res.send('deleting a product');
+  // if successful redirect to /products with some way to communicate that action was successful
+  // if not successful, redirect to new route /products/:id with message that action was unsuccessful
+});
 
 function checkIfAllParametersProvided(input){
   let requiredFields = ['name', 'price', 'inventory'];

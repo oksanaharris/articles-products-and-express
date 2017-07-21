@@ -3,10 +3,15 @@ class ProductDB {
     this.products = [];
   }
 
-  delete(name){
-
+  remove(id){
+    this.products.forEach((product, index, array) => {
+      console.log('for looping');
+      if(product.id === id){
+        array.splice(index, 1);
+        console.log('found and deleted');
+      }
+    });
   }
-
 }
 
 module.exports = new ProductDB();
