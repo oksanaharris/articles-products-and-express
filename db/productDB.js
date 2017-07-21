@@ -1,6 +1,6 @@
 class ProductDB {
   constructor (){
-    this.products = [];
+    this.products = [{id: 1, name: 'sticks', price: 2, inventory: 3}, {id: 2, name: 'carrots', price: 3, inventory: 5}];
   }
 
   remove(id){

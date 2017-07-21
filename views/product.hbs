@@ -1,0 +1,20 @@
+<h1>Here is the product you were looking for!</h1>
+
+<div class="product">
+  <h2>{{name}}</h2>
+  <p>Id: {{id}}</p>
+  <p>Price: ${{price}}</p>
+  <p>Inventory: {{inventory}}</p>
+</div>
+
+<form action="/products/{{id}}/edit" method="get">
+  <button type="submit">Edit</button>
+</form>
+
+<form action="/products/{{id}}?_method=DELETE" method="POST" enctype ="application/x-www-form-urlencoded">
+  <button type="submit">Delete</button>
+</form>
+
+<form action="/products/" method="get">
+  <button type="submit">Back to products</button>
+</form>

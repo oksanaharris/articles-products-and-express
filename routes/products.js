@@ -7,42 +7,58 @@ const ProductDb = require('../db/productDB.js');
 const Product = require('../db/products.js');
 //just a function
 
-
 router.get('/', function (req, res){
-  res.send('all products');
-  //response with HTML generated from your template which displays all Products added thus far
+  res.render('products', ProductDb);
 });
 
+router.get('/new', function (req, res){
+  res.render('productNew', {'hello': 'helo'});
+})
+
 router.get('/:id', function (req, res){
-  res.send('some product');
+    console.log('from GET /products/:id - req.params.id', req.params.id);
+  if(!findExistingProduct('id', parseInt(req.params.id))) return res.status(400).send({'error': 'a product with this id does not exist'});
+
+  res.render('product', findExistingProduct('id', parseInt(req.params.id)));
   // response with HTML generated from your teamplate
 });
 
+router.get('/:id/edit', function (req, res){
+  if(!findExistingProduct('id', parseInt(req.params.id))) return res.status(400).send({'error': 'a product with this id does not exist'});
+  res.render('productEdit', findExistingProduct('id', parseInt(req.params.id)));
+})
+
+
+
 router.post('/', function (req, res){
 
-  console.log(req.body);
+  console.log('request method', req.method);
+  console.log('request body', req.body);
+  console.log('request headers', req.headers);
 
   if(findExistingProduct('name', req.body.name)) return res.status(400).send({'error': 'cannot post to an existing product'});
   if(!checkIfAllParametersProvided(req.body)) return res.status(400).send({'error': 'must provide name, price, and inventory'});
+  // these should redirect back to new page, and display an error message
+
   createNewProduct(req.body);
   console.log(ProductDb.products);
-  res.send('creating an product');
 
-  // res.status(400).send({'error': 'must provide name, price and inventory'});
-  // res.redirect('/');
-  // if you send to slash new/get - form that allows you;
-  // redirect to new form page, display error message with flash and using res.render
+  res.redirect('/products');
+  //does this redirect to root, not /products?!?!?!?1
+  //since we do not specify the method here (in res redirect), does this mean we always have to keep
+  // our urls separate for our get and post and put methods?
+
 });
 
 
 router.put('/:id', function (req, res){
+  console.log('put is being hit!!!');
   console.log(req.params.id);
   console.log('returned product', findExistingProduct('id', parseInt(req.params.id)));
   if(!findExistingProduct('id', parseInt(req.params.id))) return res.status(400).send({'error': 'cannot edit a non-existing product'});
   if(parseInt(req.params.id) !== parseInt(req.body.id)) return res.status(400).send({'error': 'id in url and in body do not match'});
   updateProduct(req.body, findExistingProduct('id', parseInt(req.params.id)));
-  res.send('updated a product');
-  // if successful redirect to /products/:id so they can see updates
+  res.redirect('/products/'+req.body.id);
   // if not successful, redirect to new route /products/:id/edit with error in flash
   console.log(ProductDb.products);
 });
@@ -52,7 +68,7 @@ router.delete('/:id', function (req, res){
   if(!findExistingProduct('id', parseInt(req.params.id))) return res.status(400).send({'error': 'cannot delete a non-existing product'});
   ProductDb.remove(parseInt(req.params.id));
   console.log(ProductDb.products);
-  res.send('deleting a product');
+  res.redirect('/products');
   // if successful redirect to /products with some way to communicate that action was successful
   // if not successful, redirect to new route /products/:id with message that action was unsuccessful
 });

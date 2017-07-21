@@ -1,0 +1,19 @@
+<h1>Here are all the Products!</h1>
+
+<div class="productsContainer">
+  {{#each products}}
+    <div class="product">
+      <h2>{{name}}</h2>
+      <p>Id: {{id}}</p>
+      <p>Price: ${{price}}</p>
+      <p>Inventory: {{inventory}}</p>
+      <form action="/products/{{id}}" method="get">
+       <button type="submit">View</button>
+      </form>
+    </div>
+  {{/each}}
+</div>
+
+<form action="/products/new" method="get">
+  <button type="submit">Add</button>
+</form>

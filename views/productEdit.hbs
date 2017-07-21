@@ -1,0 +1,26 @@
+<h1>Here is the product you were looking to edit!</h1>
+
+<p>Id: {{id}}</p>
+<form action="/products/{{id}}?_method=PUT" method="POST" enctype ="application/x-www-form-urlencoded">
+  {{!-- <input type="hidden" name="_method" value="PUT"> --}}
+  <label for="name">Name</label>
+  <input type = "text" name="name" value = {{name}}>
+  <br>
+  <br>
+  <label for="price">Price</label>
+  <input type = "text" name="price" value = {{price}}>
+  <br>
+  <br>
+  <label for="inventory">Inventory</label>
+  <input type = "text" name="inventory" value = {{inventory}}>
+  <br>
+  <br>
+  <input type="hidden" name="id" value={{id}}>
+  <input type = "submit" name="submit" value="submit">
+</form>
+
+
+{{!-- make this do a PUT request --}}
+{{!-- the PUT request success then either returns to that product's page /products/:id with a success message --}}
+{{!-- or returns to this page with a fail message --}}
+{{!-- how do I pass id into this form?? but make it uneditable?? --}}
