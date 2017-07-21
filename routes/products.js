@@ -1,19 +1,24 @@
+
 const express = require('express');
 const router = express.Router();
-
 const ProductDb = require('../db/productDB.js');
-// const db = ProductDbObj;
-
 const Product = require('../db/products.js');
-//just a function
+
+let error = '';
+
 
 router.get('/', function (req, res){
+  // console.log('res locals test - ', res.locals.test);
+  // console.log('res locals', res.locals);
+  console.log('our error', error);
   res.render('products', ProductDb);
 });
 
+
 router.get('/new', function (req, res){
   res.render('productNew', {'hello': 'helo'});
-})
+});
+
 
 router.get('/:id', function (req, res){
     console.log('from GET /products/:id - req.params.id', req.params.id);
@@ -23,11 +28,11 @@ router.get('/:id', function (req, res){
   // response with HTML generated from your teamplate
 });
 
+
 router.get('/:id/edit', function (req, res){
   if(!findExistingProduct('id', parseInt(req.params.id))) return res.status(400).send({'error': 'a product with this id does not exist'});
   res.render('productEdit', findExistingProduct('id', parseInt(req.params.id)));
-})
-
+});
 
 
 router.post('/', function (req, res){
@@ -42,6 +47,7 @@ router.post('/', function (req, res){
 
   createNewProduct(req.body);
   console.log(ProductDb.products);
+  error = 'test';
 
   res.redirect('/products');
   //does this redirect to root, not /products?!?!?!?1
@@ -72,6 +78,7 @@ router.delete('/:id', function (req, res){
   // if successful redirect to /products with some way to communicate that action was successful
   // if not successful, redirect to new route /products/:id with message that action was unsuccessful
 });
+
 
 function checkIfAllParametersProvided(input){
   let requiredFields = ['name', 'price', 'inventory'];
@@ -118,6 +125,7 @@ function createNewProduct(input){
   ProductDb.products.push(newProduct);
 }
 
+
 function updateProduct(input, obj){
   console.log('input', input);
   console.log('object', obj);
@@ -134,5 +142,6 @@ function updateProduct(input, obj){
   console.log('object updated', obj);
 
 }
+
 
 module.exports = router;
