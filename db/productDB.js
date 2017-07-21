@@ -3,6 +3,10 @@ class ProductDB {
     this.products = [];
   }
 
+  delete(name){
+
+  }
+
 }
 
 module.exports = new ProductDB();
