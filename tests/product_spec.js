@@ -188,7 +188,36 @@ describe('adding a product', function (){
 
 describe('editing a product', function (){
 
-  // when attempting to put with an id that doesn't exist, should error out, get error header and deliver message 'cannot edit a non-existing product'
+  // X - when attempting to put with an id that doesn't exist, should error out, get error header and deliver message 'cannot edit a non-existing product'
+
+  it('should return a status of 400 - Bad Request and an error message of "cannot edit a non-existing product" if the id provided is not found on an object in the database', function (done){
+
+    let reqBody = 'name=tires&price=2.50&inventory=4';
+
+    request
+      .post('/products')
+      .set('Accept', 'application/json')
+      .send(reqBody)
+      .end((err, res) => {
+        if (err) return done(err);
+        console.log(res.body.products);
+        let lastIndex = res.body.products.length - 1;
+        let prod = res.body.products[lastIndex];
+        let nextId = parseInt(prod.id) + 1;
+        console.log('product id', prod.id);
+        request
+          .put('/products/'+nextId)
+          .set('Accept', 'application/json')
+          .send(reqBody)
+          .expect(400)
+          .end((err, res) => {
+            if (err) return done(err);
+            expect(res.body.error).to.equal('cannot edit a non-existing product');
+            done();
+          });//.end
+      });//end
+  });//it
+
   // X - add - res.body.id, name, etc. should equal the new product object's properties, new product should be found in DB
   // X - add - new id should not equal any of the old id's
   // add - should not be able to add a product if name exists
@@ -203,7 +232,7 @@ describe('editing a product', function (){
   // X - products/new submit returns the /products page - redirects
 
 
-})
+});
 
 //FUNCTIONALITY
 // X - add - res.body.id, name, etc. should equal the new product object's properties, new product should be found in DB
