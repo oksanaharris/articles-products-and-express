@@ -41,8 +41,6 @@ router.get('/:id/edit', function (req, res){
 router.post('/', function (req, res){
 
   console.log('request method', req.method);
-  console.log('request body', req.body);
-  console.log('request headers', req.headers);
 
   if(!checkIfAllParametersProvided(req.body)) return res.status(400).send({'error': 'must provide name, price, and inventory'});
   if(findExistingProduct('name', req.body.name)) return res.status(400).send({'error': 'cannot post to an existing product'});
@@ -52,7 +50,6 @@ router.post('/', function (req, res){
   // these should redirect back to new page, and display an error message
 
   createNewProduct(req.body);
-  console.log(ProductDb.products);
   // error = 'test';
   if (req.headers.hasOwnProperty('accept') && req.headers.accept.match(/json/)) {
     return res.json(ProductDb);

@@ -5,7 +5,7 @@ const supertest = require('supertest');
 
 const server = require('../server.js');
 
-const ProductDB = require('../db/productDB.js');
+// const ProductDB = require('../db/productDB.js');
 
 const expect = chai.expect;
 const should = chai.should();
@@ -17,32 +17,35 @@ beforeEach(function () {
 });
 
 
-
 describe('adding a product', function (){
 
   it('should return a status of 400 - Bad Request and an error message of "cannot post to an existing product" if name is the same as an existing product\'s name', function (done){
 
-    let testProduct = {name: 'stickandstones', price: 2.00, inventory: 1};
-    ProductDB.products.push(testProduct);
-
-    let reqBody = 'name=stickandstones&price=2.50&inventory=4';
+    let reqBody = 'name=dogbiskets&price=2.50&inventory=4';
 
     request
       .post('/products')
       .set('Accept', 'application/json')
       .send(reqBody)
-      .expect(400)
       .end((err, res) => {
         if (err) return done(err);
-        expect(res.body.error).to.equal('cannot post to an existing product');
-        done();
-      });//.end
+        request
+          .post('/products')
+          .set('Accept', 'application/json')
+          .send(reqBody)
+          .expect(400)
+          .end((err, res) => {
+            if (err) return done(err);
+            expect(res.body.error).to.equal('cannot post to an existing product');
+            done();
+          });//.end
+      });//end
   });//it
 
 
   it ('should return a status of 400 - Bad Request and an error message of "price should be a number"', function (done) {
 
-    let reqBody = 'name=munchkins&price=twodollars&inventory=4';
+    let reqBody = 'name=soup&price=twodollars&inventory=4';
 
     request
       .post('/products')
@@ -59,7 +62,7 @@ describe('adding a product', function (){
 
   it ('should return a status of 400 - Bad Request and an error message of "price should be a number"', function (done) {
 
-    let reqBody = 'name=munchkins&price=2&inventory=fourdollars';
+    let reqBody = 'name=cucumbers&price=2&inventory=fourdollars';
 
     request
       .post('/products')
@@ -76,7 +79,7 @@ describe('adding a product', function (){
 
   it ('should return a status of 400 - Bad Request and an error message of "must provide name, price, and inventory" if missing the inventory parameter', function (done) {
 
-    let reqBody = 'name=munchkins&price=2';
+    let reqBody = 'name=tomatoes&price=2';
 
     request
       .post('/products')
@@ -93,7 +96,7 @@ describe('adding a product', function (){
 
   it ('should return a status of 400 - Bad Request and an error message of "must provide name, price, and inventory" if missing the price parameter', function (done) {
 
-    let reqBody = 'name=munchkins&inventory=fourdollars';
+    let reqBody = 'name=bagels&inventory=fourdollars';
 
     request
       .post('/products')
@@ -127,7 +130,7 @@ describe('adding a product', function (){
 
   it('should add an object to the array with properties that match the passed-in name (string), price(number) and inventory(number) parameters and a unique id(number) assigned', function (done){
 
-    let reqBody = 'name=dogbiskets&price=2.50&inventory=4';
+    let reqBody = 'name=bread&price=2.50&inventory=4';
 
     request
       .post('/products')
@@ -141,7 +144,7 @@ describe('adding a product', function (){
           if(product.name === 'dogbiskets'){
             matchingProducts.push(product);
             array.splice(index, 1);
-            ProductDB.products.pop();
+            // ProductDB.products.pop();
           }//if
         });//for each
 
@@ -167,7 +170,7 @@ describe('adding a product', function (){
 
   it('should redirect to the products page if successful', function (done){
 
-    let reqBody = 'name=cats&price=3&inventory=2';
+    let reqBody = 'name=catnip&price=3&inventory=2';
 
     request
       .post('/products')
