@@ -39,3 +39,4 @@ app.use('/articles', articlesRouter);
 
 app.use('/products', productsRouter);
 
+module.exports = app;

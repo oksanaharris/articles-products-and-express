@@ -4,13 +4,16 @@ const router = express.Router();
 const ProductDb = require('../db/productDB.js');
 const Product = require('../db/products.js');
 
-let error = '';
+// let error = '';
 
 
 router.get('/', function (req, res){
   // console.log('res locals test - ', res.locals.test);
   // console.log('res locals', res.locals);
-  console.log('our error', error);
+  // console.log('our error', error);
+  if(req.headers.hasOwnProperty('accept') && req.headers.accept.match(/json/)) {
+    return res.json(ProductDb);
+  }
   res.render('products', ProductDb);
 });
 
@@ -41,14 +44,19 @@ router.post('/', function (req, res){
   console.log('request body', req.body);
   console.log('request headers', req.headers);
 
-  if(findExistingProduct('name', req.body.name)) return res.status(400).send({'error': 'cannot post to an existing product'});
   if(!checkIfAllParametersProvided(req.body)) return res.status(400).send({'error': 'must provide name, price, and inventory'});
+  if(findExistingProduct('name', req.body.name)) return res.status(400).send({'error': 'cannot post to an existing product'});
+  if(isNaN(parseFloat(req.body.price))) return res.status(400).send({'error': 'price should be a number'});
+  if(isNaN(parseInt(req.body.inventory))) return res.status(400).send({'error': 'inventory should be a number'});
+
   // these should redirect back to new page, and display an error message
 
   createNewProduct(req.body);
   console.log(ProductDb.products);
-  error = 'test';
-
+  // error = 'test';
+  if (req.headers.hasOwnProperty('accept') && req.headers.accept.match(/json/)) {
+    return res.json(ProductDb);
+  }
   res.redirect('/products');
   //does this redirect to root, not /products?!?!?!?1
   //since we do not specify the method here (in res redirect), does this mean we always have to keep
