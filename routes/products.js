@@ -73,10 +73,10 @@ router.post('/', function (req, res){
 
   // these should redirect back to new page, and display an error message
 
-  db.none('INSERT INTO products (name, price, inventory) VALUES ($1, $2, $3)', [name, price, inventory])
-  .then(() => {
+  db.any('INSERT INTO products (name, price, inventory) VALUES ($1, $2, $3) RETURNING id', [name, price, inventory])
+  .then((result) => {
     if (req.headers.hasOwnProperty('accept') && req.headers.accept.match(/json/)) {
-      return res.json({success: true});
+      return res.json({success: true, id: result[0].id});
     }
     res.redirect('/products');
   }).catch((error) => {
@@ -90,9 +90,7 @@ router.post('/', function (req, res){
 
 
 router.put('/:id', function (req, res){
-  console.log('put is being hit!!!');
 
-  if(parseInt(req.params.id) !== parseInt(req.body.id)) return res.status(400).send({'error': 'id in url and in body do not match'});
   if(isNaN(parseFloat(req.body.price))) return res.status(400).send({'error': 'price should be a number'});
   if(isNaN(parseInt(req.body.inventory))) return res.status(400).send({'error': 'inventory should be a number'});
 
