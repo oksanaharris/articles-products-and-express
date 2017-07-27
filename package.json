@@ -20,7 +20,8 @@
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "express-handlebars": "^3.0.0",
-    "method-override": "^2.3.9"
+    "method-override": "^2.3.9",
+    "pg-promise": "^6.3.6"
   },
   "devDependencies": {
     "chai": "^4.1.0",

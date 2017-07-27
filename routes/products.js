@@ -4,31 +4,51 @@ const router = express.Router();
 const ProductDb = require('../db/productDB.js');
 const Product = require('../db/products.js');
 
-// let error = '';
+const pgp = require('pg-promise')();
+const db = pgp('postgres://localhost:5432/products_and_articles');
 
+// let error = '';
+ db.any('SELECT * FROM products')
+  .then((data) => {
+    console.log (data);
+    // res.render('products', ProductDb);
+  });
 
 router.get('/', function (req, res){
-  // console.log('res locals test - ', res.locals.test);
-  // console.log('res locals', res.locals);
-  // console.log('our error', error);
-  if(req.headers.hasOwnProperty('accept') && req.headers.accept.match(/json/)) {
-    return res.json(ProductDb);
-  }
-  res.render('products', ProductDb);
+
+  db.any('SELECT * FROM products')
+  .then((products) => {
+    if(req.headers.hasOwnProperty('accept') && req.headers.accept.match(/json/)) {
+      return res.json(products);
+    }
+    res.render('products', {products});
+  });
 });
 
 
 router.get('/new', function (req, res){
-  res.render('productNew', {'hello': 'helo'});
+  res.render('productNew');
 });
 
 
 router.get('/:id', function (req, res){
-    console.log('from GET /products/:id - req.params.id', req.params.id);
-  if(!findExistingProduct('id', parseInt(req.params.id))) return res.status(400).send({'error': 'a product with this id does not exist'});
 
-  res.render('product', findExistingProduct('id', parseInt(req.params.id)));
-  // response with HTML generated from your teamplate
+  let productId = req.params.id;
+
+  db.any('SELECT * FROM products WHERE id = $1', [productId])
+  .then((productsResult) => {
+    console.log('this is our product from GET/:ID', productsResult);
+    if(req.headers.hasOwnProperty('accept') && req.headers.accept.match(/json/)) {
+      return res.json(productsResult);
+    }
+    if(productsResult.length < 1) return res.status(400).send({'error': 'a product with this id does not exist'});
+    res.render('product', productsResult[0]);
+  });
+
+  // if(!findExistingProduct('id', parseInt(req.params.id))) return res.status(400).send({'error': 'a product with this id does not exist'});
+
+  // res.render('product', findExistingProduct('id', parseInt(req.params.id)));
+  // // response with HTML generated from your teamplate
 });
 
 
